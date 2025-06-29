@@ -9,18 +9,32 @@ export interface CartItem {
   quantity: number;
 }
 
+// Tipo de dirección
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
 // Tipos de acciones para el carrito
 type CartAction =
   | { type: 'ADD_ITEM'; payload: CartItem }
   | { type: 'REMOVE_ITEM'; payload: string } // id del producto
-  | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } };
+  | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
+  | { type: 'SET_ADDRESS'; payload: Address };
 
 // Tipo del estado
-type CartState = CartItem[];
+interface CartState {
+  cartItems: CartItem[];
+  address: Address | null;
+}
 
 // Contexto con estado y dispatch
 interface CartContextType {
   cartItems: CartItem[];
+  address: Address | null;
   dispatch: React.Dispatch<CartAction>;
 }
 
@@ -31,15 +45,20 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM':
-      return [...state, action.payload];
+      return { ...state, cartItems: [...state.cartItems, action.payload] };
     case 'REMOVE_ITEM':
-      return state.filter(item => item._id !== action.payload);
+      return { ...state, cartItems: state.cartItems.filter(item => item._id !== action.payload) };
     case 'UPDATE_QUANTITY':
-      return state.map(item =>
-        item._id === action.payload.id
-          ? { ...item, quantity: action.payload.quantity }
-          : item
-      );
+      return {
+        ...state,
+        cartItems: state.cartItems.map(item =>
+          item._id === action.payload.id
+            ? { ...item, quantity: action.payload.quantity }
+            : item
+        ),
+      };
+    case 'SET_ADDRESS':
+      return { ...state, address: action.payload };
     default:
       return state;
   }
@@ -47,10 +66,10 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
 // Proveedor
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [cartItems, dispatch] = useReducer(cartReducer, []);
+  const [state, dispatch] = useReducer(cartReducer, { cartItems: [], address: null });
 
   return (
-    <CartContext.Provider value={{ cartItems, dispatch }}>
+    <CartContext.Provider value={{ cartItems: state.cartItems, address: state.address, dispatch }}>
       {children}
     </CartContext.Provider>
   );

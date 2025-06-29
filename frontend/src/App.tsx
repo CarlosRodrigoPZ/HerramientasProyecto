@@ -14,6 +14,8 @@ import BrandsPage from './pages/MarcasPage';
 import ContactPage from './pages/ContactPage';
 import CartPage from './pages/CartPage';
 import AdminProductsPage from './pages/AdminProductPage';
+import VerificationSuccess from './pages/VerificationSuccess';
+import VerificationFailed from './pages/VerificationFailed';
 
 const App: React.FC = () => {
   return (
@@ -30,16 +32,16 @@ const App: React.FC = () => {
         <Route path="/contacto" element={<ContactPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/marcas" element={<BrandsPage />} />
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminPanel />
-            </AdminRoute>
-          }
+        <Route path="/verification-success" element={<VerificationSuccess />} />
+        <Route path="/verification-failed" element={<VerificationFailed />} />
+        <Route path="/admin" element={
+          <AdminRoute>
+            <AdminPanel />
+          </AdminRoute>
+        }
         />
       </Routes>
-     <Footer />
+      <Footer />
     </Router>
   );
 };

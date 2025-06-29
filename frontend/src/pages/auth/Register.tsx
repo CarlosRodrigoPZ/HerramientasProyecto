@@ -26,7 +26,8 @@ function getPasswordStrength(password: string): { level: string, percent: number
 
 export default function Register() {
   const [form, setForm] = useState({
-    nombre: '', apellidos: '', pais: '', telefono: '', correo: '', password: '', confirmPassword: ''
+    nombre: '', apellidos: '', pais: '', telefono: '', correo: '', password: '', confirmPassword: '',
+    street: '', city: '', state: '', postalCode: '', country: '',
   });
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
@@ -65,8 +66,8 @@ export default function Register() {
     }
 
     try {
-      const { nombre, apellidos, pais, telefono, correo, password } = form;
-      const response = await register({ nombre, apellidos, pais, telefono, correo, password });
+      const { nombre, apellidos, pais, telefono, correo, password, street, city, state, postalCode, country } = form;
+      const response = await register({ nombre, apellidos, pais, telefono, correo, password, street, city, state, postalCode, country });
 
       if (response?.error === 'email_exists') {
         setMessage('El correo ya está registrado');
@@ -115,6 +116,13 @@ export default function Register() {
           <input type="email" name="correo" placeholder="Correo" onChange={handleChange} required className="bg-gray-800 p-3 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
           <input type="password" name="password" placeholder="Contraseña" onChange={handleChange} required className="bg-gray-800 p-3 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
           <input type="password" name="confirmPassword" placeholder="Repetir Contraseña" onChange={handleChange} required className="bg-gray-800 p-3 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
+
+          <h3 className="text-xl font-semibold mt-6 mb-3">Dirección</h3>
+          <input name="street" placeholder="Calle" onChange={handleChange} required className="bg-gray-800 p-3 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
+          <input name="city" placeholder="Ciudad" onChange={handleChange} required className="bg-gray-800 p-3 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
+          <input name="state" placeholder="Estado/Provincia" onChange={handleChange} required className="bg-gray-800 p-3 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
+          <input name="postalCode" placeholder="Código Postal" onChange={handleChange} required className="bg-gray-800 p-3 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
+          <input name="country" placeholder="País" onChange={handleChange} required className="bg-gray-800 p-3 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
 
           <div className="w-full h-2 bg-gray-700 rounded-full mt-1">
             <div style={{ width: `${strength.percent}%`, backgroundColor: strength.color }} className="h-full rounded-full transition-all duration-300" />

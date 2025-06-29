@@ -47,9 +47,13 @@ export default function Login() {
       setMessageType("success");
 
       setTimeout(() => navigate("/profile"), 500);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error en login:", err);
-      setMessage("Usuario o contraseña incorrectos");
+      if (err.response && err.response.status === 401 && err.response.data && err.response.data.message === 'Por favor, verifica tu correo electrónico para iniciar sesión.') {
+        setMessage('Tu cuenta no ha sido activada. Por favor, verifica tu correo electrónico.');
+      } else {
+        setMessage("Usuario o contraseña incorrectos");
+      }
       setMessageType("error");
     }
   };

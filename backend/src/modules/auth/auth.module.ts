@@ -6,13 +6,14 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User, UserSchema } from './entities/user.entity';
+import { AdminGuard } from './admin.guard';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: { expiresIn: '1d' },
       }),
@@ -20,7 +21,7 @@ import { User, UserSchema } from './entities/user.entity';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [JwtStrategy], // Para usar en otros módulos
+  providers: [AuthService, JwtStrategy, AdminGuard],
+  exports: [JwtStrategy, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
 })
 export class AuthModule {}

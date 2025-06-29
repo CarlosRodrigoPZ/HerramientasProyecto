@@ -14,14 +14,13 @@ export class UploadsService {
 
   async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        { folder: 'ecommerce-watches' },
-        (error, result) => {
-          if (error) return reject(error);
+      cloudinary.uploader
+        .upload_stream({ folder: 'ecommerce-watches' }, (error, result) => {
+          if (error) return reject(new Error(error.message));
           if (!result) return reject(new Error('No result from Cloudinary'));
           resolve(result);
-        },
-      ).end(file.buffer);
+        })
+        .end(file.buffer);
     });
   }
 }

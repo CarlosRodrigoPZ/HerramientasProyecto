@@ -13,8 +13,8 @@ export class Order {
     {
       product: { type: Types.ObjectId, ref: 'Product', required: true },
       quantity: { type: Number, required: true },
-      price: { type: Number, required: true },     // Precio unitario del producto
-      subtotal: { type: Number, required: true },  // quantity * price
+      price: { type: Number, required: true }, // Precio unitario del producto
+      subtotal: { type: Number, required: true }, // quantity * price
     },
   ])
   items: {

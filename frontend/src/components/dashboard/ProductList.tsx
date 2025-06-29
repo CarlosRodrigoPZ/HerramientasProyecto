@@ -9,6 +9,7 @@ interface Product {
   type: string;
   material: string;
   image: string;
+  isDisabled: boolean;
 }
 
 export default function ProductList() {
@@ -17,7 +18,11 @@ export default function ProductList() {
   const [editValues, setEditValues] = useState<Partial<Product>>({});
 
   const fetchProducts = async () => {
-    const res = await fetch('http://localhost:5000/api/products');
+    const res = await fetch('http://localhost:3000/products', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     const data = await res.json();
     setProducts(data);
   };
@@ -27,7 +32,12 @@ export default function ProductList() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    const res = await fetch(`http://localhost:5000/api/products/${id}`, { method: 'DELETE' });
+    const res = await fetch(`http://localhost:3000/products/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     if (res.ok) {
       setProducts(products.filter(p => p._id !== id));
     }
@@ -43,15 +53,29 @@ export default function ProductList() {
   };
 
   const handleEditSave = async (id: string) => {
-    const res = await fetch(`http://localhost:5000/api/products/${id}`, {
+    const res = await fetch(`http://localhost:3000/products/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
       body: JSON.stringify(editValues),
     });
 
     if (res.ok) {
       setEditingId(null);
       fetchProducts();
+    }
+  };
+
+  const handleDisableToggle = async (id: string, currentStatus: boolean) => {
+    const res = await fetch(`http://localhost:3000/products/${id}/disable`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
+      body: JSON.stringify({ isDisabled: !currentStatus }),
+    });
+
+    if (res.ok) {
+      fetchProducts();
+    } else {
+      alert('Error al cambiar el estado de deshabilitación');
     }
   };
 
@@ -102,6 +126,7 @@ export default function ProductList() {
               <p className="text-xl font-semibold text-gray-800 mb-1">{product.name}</p>
               <p className="text-gray-600">Marca: {product.brand}</p>
               <p className="text-gray-600">Precio: ${product.price}</p>
+              <p className="text-gray-600">Estado: {product.isDisabled ? 'Deshabilitado' : 'Habilitado'}</p>
               <p className="text-gray-600 mb-2">{product.description}</p>
 
               <div className="flex gap-2">
@@ -116,6 +141,12 @@ export default function ProductList() {
                   className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
                 >
                   Eliminar
+                </button>
+                <button
+                  onClick={() => handleDisableToggle(product._id, product.isDisabled)}
+                  className={`ml-2 ${product.isDisabled ? 'bg-green-600 hover:bg-green-700' : 'bg-orange-600 hover:bg-orange-700'} text-white px-4 py-2 rounded-lg`}
+                >
+                  {product.isDisabled ? 'Habilitar' : 'Deshabilitar'}
                 </button>
               </div>
             </div>

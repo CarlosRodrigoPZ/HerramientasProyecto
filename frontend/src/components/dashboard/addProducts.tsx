@@ -50,8 +50,11 @@ const AddProduct: React.FC<AddProductProps> = ({ onProductAdded }) => {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/products', {
+      const res = await fetch('http://localhost:3000/products', {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
         body: formData,
       });
 

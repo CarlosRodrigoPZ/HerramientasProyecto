@@ -31,6 +31,9 @@ export class Product {
 
   @Prop()
   image: string;
+
+  @Prop({ default: false })
+  isDisabled: boolean;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
